@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Determine API base URL based on environment
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://mse2-1r63.onrender.com/api';
 
 console.log('API Base URL:', API_BASE_URL); // For debugging
 
