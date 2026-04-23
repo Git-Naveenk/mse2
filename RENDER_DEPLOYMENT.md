@@ -64,6 +64,7 @@ git push -u origin main
    ```
    MONGODB_URI=mongodb+srv://sk:YHTU3aSHK0XBKU4e@backend.vjgyz21.mongodb.net/mse2
    JWT_SECRET=your_strong_secret_key_here
+   FRONTEND_URL=https://your-frontend-url.vercel.app
    PORT=5000
    NODE_ENV=production
    ```

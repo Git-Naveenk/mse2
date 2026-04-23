@@ -15,24 +15,32 @@ app.use(express.json());
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5000',
-  process.env.FRONTEND_URL || ''
+  process.env.FRONTEND_URL,
+  // Fallback for production if FRONTEND_URL is not set in the environment (e.g. Render)
+  'https://mse2-seven.vercel.app'
 ].filter(Boolean);
 
-app.use(cors({
-  origin: function(origin, callback) {
+const allowedOriginPatterns = [
+  // Allow Vercel preview deployments like: https://mse2-seven-git-branch-user.vercel.app
+  /^https:\/\/mse2-seven(?:-[a-z0-9-]+)?\.vercel\.app$/i
+];
+
+const corsOptions = {
+  origin(origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (allowedOriginPatterns.some((re) => re.test(origin))) return callback(null, true);
+
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -51,6 +59,9 @@ app.use((req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
+  if (typeof err?.message === 'string' && err.message.startsWith('Not allowed by CORS:')) {
+    return res.status(403).json({ success: false, message: err.message });
+  }
   res.status(500).json({ success: false, message: 'Internal server error' });
 });
 

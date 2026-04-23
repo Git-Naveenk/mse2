@@ -63,6 +63,7 @@ Click "Advanced" → "Add Environment Variable"
 ```
 MONGODB_URI = mongodb+srv://sk:YHTU3aSHK0XBKU4e@backend.vjgyz21.mongodb.net/mse2
 JWT_SECRET = your_super_secret_key_12345_change_this
+FRONTEND_URL = https://your-frontend-url.vercel.app
 NODE_ENV = production
 PORT = 5000
 ```
